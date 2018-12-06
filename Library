@@ -1,11 +1,129 @@
+package teamprojecttest;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 public class Library {
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		private String name;
-		
-
+	private String name;
+	private static TreeSet<Book> registeredBook;
+	private static HashSet<Borrower> registeredBorrower;
+	
+	public Library(String name) {
+		this.name = name;
+		registeredBook = new TreeSet<Book>(new Comp());
+		registeredBorrower = new HashSet<Borrower>();
 	}
-
+	
+	public String registerOneBorrower(String studentName, int studentNumber) {
+		while(true) {
+			if(registeredBorrower.contains(studentNumber) || registeredBorrower.contains(studentName)) {
+				return ("이미 등록된 이용자입니다.");
+			}
+			else {
+				Borrower borrower = new Borrower(studentName, studentNumber);
+				registeredBorrower.add(borrower);
+				return ("등록이 완료되었습니다.");
+			}
+		}
+	}
+	
+	public String registerOneBook(String title, String author, int catalogueNumber) {
+		while(true) {
+			if(registeredBook.contains(catalogueNumber)) {
+				return ("이미 등록된 책입니다.");
+			}
+			else {
+				Book book = new Book(title, author, catalogueNumber);
+				registeredBook.add(book);
+				return ("등록이 완료되었습니다.");
+			}
+		}
+		
+	}
+	
+	public void displayBooksForLoan() {
+		Iterator<Book> iter = registeredBook.iterator();
+		while(iter.hasNext() == true) {
+			Book book = (Book) iter.next();
+			if(book.getBorrower() == null) {
+				book.display();
+			}
+		}
+	}
+	
+	public void displayBooksOnLoan() {
+		Iterator<Book> iter = registeredBook.iterator();
+		while(iter.hasNext() == true) {
+			Book book = (Book) iter.next();
+			if(book.getBorrower() != null) 
+				book.display();
+		}
+	}
+	
+	public static Book findBook(int catalogueNumber) {
+		Book target = null;
+		for(Book book : registeredBook) {
+			if(book.getCatalogueNumber() == catalogueNumber) {
+				target = book;
+				break;
+			}
+		}
+		if(target.getBorrower() != null) {
+			return target;
+		}
+		else {
+			return target;
+		}
+		
+	}
+	
+	public static Borrower findBorrower(int studentNumber) {
+		Borrower target = null;
+		for(Borrower borrower : registeredBorrower) {
+			if(borrower.getStudentNumber() == studentNumber) {
+				target = borrower;
+				break;
+			}
+		}
+		return target;
+		
+	}
+	
+	public void lendOneBook(int catalogueNumber, int studentNumber) {
+		Book book = findBook(catalogueNumber);
+		Borrower borrower = findBorrower(studentNumber);
+		if(book != null) {
+			if(borrower != null){
+				book.attachBorrower(borrower);
+				borrower.attachBook(book);
+				System.out.println("대출이 완료되었습니다.");
+			}
+			else {
+				System.out.println("대출이 불가합니다.");
+			}
+		}
+	}
+	
+	public void returnOneBook(int catalogueNumber) {
+		Book book = findBook(catalogueNumber);
+		Borrower borrower = book.getBorrower();
+		book.detachBorrower();
+		borrower.detachBook();
+		System.out.println("반납이 완료되었습니다.");
+		
+		int date = 0;
+		switch(date) {
+		case 1:
+			System.out.println("반납기간 지연");
+			break;
+		case 2:
+			System.out.println("반납 성공");
+			break;
+		}
+	}
+	
+	
+	
+	
 }
